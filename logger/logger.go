@@ -6,10 +6,7 @@ import (
 type Zlogger struct {
 	log Logger
 }
-/*
-file, "初始化一个文件日志实例"
-console, "初始化console日志实例"
-*/
+
 func InitLogger(logway string, filePath string, level string) *Zlogger{
 	logger := new(Zlogger)
 	switch logway {
