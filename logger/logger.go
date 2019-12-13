@@ -1,129 +1,42 @@
-//Powered By Jason Wang Author.
 package logger
 
 import (
 	"fmt"
-	"io"
-	"log"
 )
 
-const (
-	LOG_PREFIX = "[logger]"
-	LOG_FORMAT = log.LstdFlags
-	LOG_LEVEL  = LOG_DEBUG
-)
+var Log Logger
 
-type LogEntry struct {
-	level    int
-	LogInfo  *log.Logger
-	LogWarn  *log.Logger
-	LogDebug *log.Logger
-	LogError *log.Logger
-	prefix   string
-	format   int
-	output   io.Writer
-}
-
-func New(o io.Writer) *LogEntry {
-	logger := &LogEntry{
-		output: o,
-		level:  LOG_LEVEL,
-		prefix: LOG_PREFIX,
-		format: LOG_FORMAT,
+/*
+file, "初始化一个文件日志实例"
+console, "初始化console日志实例"
+*/
+func InitLogger(logway string, filePath string, level string) {
+	switch logway {
+	case "FILE":
+		Log = NewFileLog(filePath, level)
+	case "CONSOLE":
+		Log = NewConsoleLog(level)
+	default:
+		panic(fmt.Sprintf("unsupport logger name:%s", logway))
 	}
-	logger.Init()
-	return logger
 }
 
-func (l *LogEntry) Init() {
-	l.LogDebug = log.New(l.output, fmt.Sprintf("%s %5s: ", l.prefix, "DEBUG"), l.format)
-	l.LogInfo = log.New(l.output, fmt.Sprintf("\033[32m%s %5s: \033[0m", l.prefix, "INFO"), l.format)
-	l.LogWarn = log.New(l.output, fmt.Sprintf("\033[33m%s %5s: \033[0m", l.prefix, "WARN"), l.format)
-	l.LogError = log.New(l.output, fmt.Sprintf("\033[31m%s %5s: \033[0m", l.prefix, "ERROR"), l.format)
-	return
+func Debug(format string, args ...interface{}) {
+	Log.Debug(format, args...)
 }
 
-func (l *LogEntry) Prefix() string {
-	return l.prefix
+func Info(format string, args ...interface{}) {
+	Log.Info(format, args...)
 }
 
-func (l *LogEntry) SetPrefix(prefix string) {
-	l.prefix = prefix
-	l.Init()
-	return
+func Warn(format string, args ...interface{}) {
+	Log.Warn(format, args...)
 }
 
-func (l *LogEntry) Flag() int {
-	return l.format
+func Error(format string, args ...interface{}) {
+	Log.Error(format, args...)
 }
 
-func (l *LogEntry) SetFlag(flag int) {
-	l.format = flag
-	l.Init()
-	return
-}
-
-func (l *LogEntry) Level() int {
-	return l.level
-}
-
-func (l *LogEntry) SetLevel(level int) {
-	l.level = level
-	return
-}
-
-func (l *LogEntry) Debug(v ...interface{}) {
-	if l.level <= LOG_DEBUG {
-		l.LogDebug.Output(2, fmt.Sprint(v...))
-	}
-	return
-}
-
-func (l *LogEntry) Debugf(f string, v ...interface{}) {
-	if l.level <= LOG_DEBUG {
-		l.LogDebug.Output(2, fmt.Sprintf(f, v...))
-	}
-	return
-}
-
-func (l *LogEntry) Info(v ...interface{}) {
-	if l.level <= LOG_INFO {
-		l.LogInfo.Output(2, fmt.Sprint(v...))
-	}
-	return
-}
-
-func (l *LogEntry) Infof(f string, v ...interface{}) {
-	if l.level <= LOG_INFO {
-		l.LogInfo.Output(2, fmt.Sprintf(f, v...))
-	}
-	return
-}
-
-func (l *LogEntry) Warn(v ...interface{}) {
-	if l.level <= LOG_WARN {
-		l.LogWarn.Output(2, fmt.Sprint(v...))
-	}
-	return
-}
-
-func (l *LogEntry) Warnf(f string, v ...interface{}) {
-	if l.level <= LOG_WARN {
-		l.LogWarn.Output(2, fmt.Sprintf(f, v...))
-	}
-	return
-}
-
-func (l *LogEntry) Error(v ...interface{}) {
-	if l.level <= LOG_ERROR {
-		l.LogError.Output(2, fmt.Sprint(v...))
-	}
-	return
-}
-
-func (l *LogEntry) Errorf(f string, v ...interface{}) {
-	if l.level <= LOG_ERROR {
-		l.LogError.Output(2, fmt.Sprintf(f, v...))
-	}
-	return
+func Fatal(format string, args ...interface{}) {
+	Log.Fatal(format, args...)
 }
