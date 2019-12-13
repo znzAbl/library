@@ -3,40 +3,42 @@ package logger
 import (
 	"fmt"
 )
-
-var Log Logger
-
+type Zlogger struct {
+	log Logger
+}
 /*
 file, "初始化一个文件日志实例"
 console, "初始化console日志实例"
 */
-func InitLogger(logway string, filePath string, level string) {
+func InitLogger(logway string, filePath string, level string) *Zlogger{
+	logger := new(Zlogger)
 	switch logway {
 	case "FILE":
-		Log = NewFileLog(filePath, level)
+		logger.log = NewFileLog(filePath, level)
 	case "CONSOLE":
-		Log = NewConsoleLog(level)
+		logger.log = NewConsoleLog(level)
 	default:
 		panic(fmt.Sprintf("unsupport logger name:%s", logway))
 	}
+	return logger
 }
 
-func Debug(format string, args ...interface{}) {
-	Log.Debug(format, args...)
+func (z *Zlogger)Debug(format string, args ...interface{}) {
+	z.log.Debug(format, args...)
 }
 
-func Info(format string, args ...interface{}) {
-	Log.Info(format, args...)
+func (z *Zlogger)Info(format string, args ...interface{}) {
+	z.log.Info(format, args...)
 }
 
-func Warn(format string, args ...interface{}) {
-	Log.Warn(format, args...)
+func (z *Zlogger)Warn(format string, args ...interface{}) {
+	z.log.Warn(format, args...)
 }
 
-func Error(format string, args ...interface{}) {
-	Log.Error(format, args...)
+func (z *Zlogger)Error(format string, args ...interface{}) {
+	z.log.Error(format, args...)
 }
 
-func Fatal(format string, args ...interface{}) {
-	Log.Fatal(format, args...)
+func (z *Zlogger)Fatal(format string, args ...interface{}) {
+	z.log.Fatal(format, args...)
 }
