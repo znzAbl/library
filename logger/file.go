@@ -91,7 +91,6 @@ func (f *FileLog) writeLogBackground()  {
 	for logData := range f.logDataChan {
 		f.OpenFile()
 		color := getLevelColor(logData.Level)
-		information := fmt.Sprintf("%c[0;37m[%s:%s:%d]%c[0m", ColorSeqClear, logData.Filename, logData.FuncName, logData.LineNo, ColorSeqClear)
-		fmt.Fprintf(f.file, "%c[0;%dm %s %s %s %c[0m \t %s \n", ColorSeqClear, color, logData.TimeStr, logData.LevelStr, logData.Message, ColorSeqClear, information)
+		fmt.Fprintf(f.file, "%c[0;%dm %s %s %s %c[0m \n", ColorSeqClear, color, logData.TimeStr, logData.LevelStr, logData.Message, ColorSeqClear)
 	}
 }
